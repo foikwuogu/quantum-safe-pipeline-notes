@@ -21,6 +21,25 @@ if not SCHED.exists():
     sys.exit(0)
 
 schedule = json.loads(SCHED.read_text())
+
+if "--check-key" in sys.argv:
+    # Run every day so a missing or wrong DRAFTS_KEY shows up now, not on release day.
+    key = os.environ.get("DRAFTS_KEY")
+    if not schedule:
+        print("no locked posts to check")
+        sys.exit(0)
+    if not key:
+        sys.exit("DRAFTS_KEY secret is not set; locked posts cannot be released on their dates.")
+    from cryptography.fernet import Fernet, InvalidToken
+    try:
+        f = Fernet(key.encode())
+        for e in schedule:
+            f.decrypt((ROOT / "scheduled" / (e["file"] + ".enc")).read_bytes())
+    except (InvalidToken, ValueError):
+        sys.exit("DRAFTS_KEY cannot decrypt the locked posts; re-enter the repository secret exactly.")
+    print(f"DRAFTS_KEY OK: all {len(schedule)} locked posts decrypt")
+    sys.exit(0)
+
 due = [e for e in schedule if e["release_date"] <= today]
 if not due:
     print(f"{today}: nothing due; next release {min((e['release_date'] for e in schedule), default='none')}")
