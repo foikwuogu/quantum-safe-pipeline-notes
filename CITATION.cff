@@ -20,3 +20,10 @@ keywords:
   - pipeline security
   - EO 14412
   - harvest-now-decrypt-later
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.23130001"
+    description: "Issue 01: What EO 14412 means for a pipeline operator's certificate inventory"
+  - type: doi
+    value: "10.5281/zenodo.23130292"
+    description: "Issue 02: Harvest-now-decrypt-later for SCADA telemetry"

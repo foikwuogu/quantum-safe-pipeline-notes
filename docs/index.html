@@ -85,10 +85,12 @@ mark.verify{background:var(--verify);color:var(--ink);font:500 .78em/1.4 var(--m
   <span class="mp">MP 01</span>
   <span class="entry-body"><span class="slot">September 2026</span>
   <span class="entry-title">What EO 14412 means for a pipeline operator&#x27;s certificate inventory</span>
-  <span class="entry-meta">7 min read</span></span></a>
-<div class="entry planned"><span class="mp">MP 02</span>
-  <span class="entry-body"><span class="slot">October 2026 · coming October 17</span>
-  <span class="entry-title">Harvest-now-decrypt-later for SCADA telemetry</span></span></div>
+  <span class="entry-meta">7 min read · DOI 10.5281/zenodo.23130001</span></span></a>
+<a class="entry" href="#issue-2" data-go="issue-2">
+  <span class="mp">MP 02</span>
+  <span class="entry-body"><span class="slot">October 2026</span>
+  <span class="entry-title">Harvest-now-decrypt-later for SCADA telemetry</span>
+  <span class="entry-meta">6 min read · DOI 10.5281/zenodo.23130292</span></span></a>
 <div class="entry planned"><span class="mp">MP 03</span>
   <span class="entry-body"><span class="slot">November 2026 · proposed</span>
   <span class="entry-title">Finding the cryptography inside an OPC UA deployment</span></span></div>
@@ -215,7 +217,104 @@ mark.verify{background:var(--verify);color:var(--ink);font:500 .78em/1.4 var(--m
 <li>Federal Register, <a target="_blank" rel="noopener" href="https://www.federalregister.gov/documents/2024/11/07/2024-24704/enhancing-surface-cyber-risk-management">Enhancing Surface Cyber Risk Management (proposed rule)</a>, November 7, 2024.</li>
 <li>NIST, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), August 2024.</li>
 </ul></div>
-  <p class="license">Text licensed <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite as: Friday Ogochukwu Ikwuogu, “What EO 14412 means for a pipeline operator&#x27;s certificate inventory,” Quantum-Safe Pipeline Notes, issue 1.</p>
+  <p class="license">DOI: <a target="_blank" rel="noopener" href="https://doi.org/10.5281/zenodo.23130001">https://doi.org/10.5281/zenodo.23130001</a> (archived on Zenodo)</p>
+  <p class="license">Text licensed <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite as: Friday Ogochukwu Ikwuogu, “What EO 14412 means for a pipeline operator&#x27;s certificate inventory,” Quantum-Safe Pipeline Notes, issue 1, https://doi.org/10.5281/zenodo.23130001.</p>
+</article>
+<article class="post" id="issue-2" hidden>
+  <a class="back" href="#index" data-go="index">← All issues</a>
+  <p class="tag">Issue 02 · October 2026 slot</p>
+  <h1>Harvest-now-decrypt-later for SCADA telemetry</h1>
+  <p class="byline">Friday Ogochukwu Ikwuogu · <span class="mono">ORCID 0009-0009-2222-1318</span> · Published 2026-10-03 · 6 min read</p>
+  <div class="prose"><p>Executive Order 14412 opens by naming the threat that makes post-quantum migration urgent before any quantum computer exists: adversaries recording encrypted U.S. data today so they can decrypt it once a cryptographically relevant quantum computer is available. Security people call it harvest-now-decrypt-later, or HNDL.</p>
+<p>HNDL is usually discussed in terms of diplomatic cables, health records, and trade secrets. This post asks a narrower question: does it matter for the telemetry that moves between a pipeline control center and its field sites? My answer is yes, but not where most people look first, and not before a more basic problem.</p>
+<h2>First, the uncomfortable baseline</h2>
+<p>HNDL assumes the traffic is encrypted. A great deal of SCADA telemetry is not. Modbus and DNP3 were designed for closed serial networks, and many links still carry them in cleartext, sometimes inside a VPN tunnel across the WAN, sometimes not even that. For cleartext links the threat model is simpler and worse: harvest now, read now. No quantum computer required.</p>
+<p>So the first-order fix is still the old one: encrypt and authenticate the links that are not. The quantum question changes <em>how</em> you should do that, because every link you encrypt this year with classical key exchange becomes a link an adversary can record and set aside.</p>
+<h2>Where the vulnerable math sits in a telemetry path</h2>
+<p>Quantum attacks threaten the public-key parts of a protocol, the parts that agree on keys and prove identity. The symmetric parts that actually encrypt the bulk data (AES) and authenticate messages (HMAC) are only modestly weakened, and NIST continues to treat AES with 128-bit and larger keys as acceptable. In a typical pipeline telemetry path, the public-key exposure sits in:</p>
+<ul>
+<li><strong>WAN VPNs</strong> (IPsec with IKEv2), where Diffie-Hellman or elliptic-curve Diffie-Hellman sets up the tunnel keys.</li>
+<li><strong>TLS</strong> wrapping DNP3 or IEC 60870-5-104 under IEC 62351-3, and TLS to cloud historians and MQTT brokers.</li>
+<li><strong>OPC UA secure channels</strong>, whose standard security policies use RSA or elliptic curves for key agreement and signatures.</li>
+<li><strong>Cellular and satellite backhaul</strong>, where the carrier or vendor IPsec configuration decides the algorithms.</li>
+<li><strong>DNP3 Secure Authentication</strong>, whose session keys are symmetric (HMAC) but whose optional asymmetric update-key change method in IEEE 1815-2012 relies on classical public-key cryptography.</li>
+</ul>
+<p>An adversary who records the handshake and the session today can, with a sufficiently capable quantum computer later, recover the session key from the handshake and read everything that followed.</p>
+<h2>The shelf-life test</h2>
+<p>The useful tool here is Michele Mosca's inequality. Let <strong>x</strong> be how long the data must stay confidential, <strong>y</strong> how long your migration will take, and <strong>z</strong> how long until a cryptographically relevant quantum computer exists. If x + y is greater than z, data you send today is already at risk.</p>
+<p>Nobody knows z. The federal deadlines in EO 14412 (2030 for key establishment, 2031 for signatures) and NIST's proposed transition schedule in NIST IR 8547 (released as an initial public draft in November 2024: RSA and elliptic-curve algorithms at the 112-bit security level deprecated after 2030, and all of them disallowed after 2035) tell you where the government has placed its bet. For an operator, y is the number you control, and for field equipment it is measured in years.</p>
+<p>Applying x to telemetry is where judgment comes in. Here is how I classify it:</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>What crosses the link</th>
+<th>How long it stays sensitive (x)</th>
+<th>HNDL concern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Individual pressure, flow, and temperature readings</td>
+<td>Minutes to hours</td>
+<td>Low on its own</td>
+</tr>
+<tr>
+<td>Aggregated operating history (normal envelopes, setpoints, seasonal patterns, compressor run profiles)</td>
+<td>Years</td>
+<td>Moderate: reveals how the system behaves and where its margins are</td>
+</tr>
+<tr>
+<td>Network and asset detail visible in traffic (device addresses, models, firmware versions, polling schedules)</td>
+<td>Years, until the equipment is replaced</td>
+<td>High: a map for a future intrusion</td>
+</tr>
+<tr>
+<td>Credentials, keys, and engineering files sent over the link (logins, configuration downloads, ladder logic)</td>
+<td>As long as they remain valid</td>
+<td>Highest: a recorded password that is never rotated is a future login</td>
+</tr>
+<tr>
+<td>Commercial data (nominations, custody-transfer measurement)</td>
+<td>Months to years</td>
+<td>Moderate</td>
+</tr>
+</tbody>
+</table></div>
+<p>The pattern is that the single reading is rarely the prize. The prize is the accumulated picture, and anything in the stream that stays valid for years.</p>
+<h2>Integrity is a different clock</h2>
+<p>HNDL is a confidentiality problem. The more dangerous failure for a pipeline is integrity: a forged command or forged firmware. Forging a signature requires the quantum capability at the moment of attack, so it is not a "harvest now" risk. But it has its own long tail: a firmware-signing key or root certificate deployed today may still be trusted by field devices when that capability arrives. That is why the previous issue put long-lived trust anchors at the top of the certificate inventory.</p>
+<h2>OT bandwidth makes this an engineering problem, not a checkbox</h2>
+<p>Post-quantum key exchange is not free on narrow links. Using the sizes in FIPS 203:</p>
+<ul>
+<li>An ML-KEM-768 exchange (encapsulation key plus ciphertext) moves <strong>2,272 bytes</strong>; a classical X25519 exchange moves <strong>64 bytes</strong>, about <strong>36 times</strong> less.</li>
+<li>On a 9,600 bps serial radio, that ML-KEM payload alone takes about <strong>1.89 seconds</strong> to transmit, against roughly <strong>0.05 seconds</strong> for X25519, before protocol overhead or retries. At 19,200 bps it is about <strong>0.95 seconds</strong>.</li>
+<li>Signatures are larger still. An ML-DSA-65 public key plus one signature (FIPS 204) is <strong>5,261 bytes</strong>, about <strong>4.38 seconds</strong> at 9,600 bps.</li>
+</ul>
+<p>On a fiber or LTE link these are rounding errors. On a licensed radio polling dozens of remote sites, they change poll cycles. The practical implications: do key establishment rarely and rekey symmetric sessions in between; terminate post-quantum tunnels at the most capable hop instead of at every RTU; and test on the actual link before committing to a design.</p>
+<h2>What to do now, in order</h2>
+<ol>
+<li><strong>Close the cleartext gap.</strong> Inventory links that carry SCADA protocols without encryption or authentication. That is today's exposure, quantum or not.</li>
+<li><strong>Prefer hybrid key exchange when you encrypt.</strong> Hybrid schemes combine a classical algorithm with ML-KEM, so a link is at least as strong as the stronger of the two. The TLS 1.3 hybrid group X25519MLKEM768 ships in OpenSSL 3.5 and is on by default in major browsers, and IKEv2 has standards for adding post-quantum protection (RFC 8784 for mixing in pre-shared keys; RFC 9370 for multiple key exchanges). Support in OT gateways and field devices varies, so check each product.</li>
+<li><strong>Use AES-256 for long-lived links.</strong> It is cheap insurance and matches NSA's CNSA 2.0 suite.</li>
+<li><strong>Shrink what is worth harvesting.</strong> Keep engineering downloads and credential exchange off long-haul links where possible, rotate credentials that cross them, and avoid static secrets that never change.</li>
+<li><strong>Rank links by shelf life, not by bandwidth.</strong> The link carrying configuration files and remote-access sessions deserves post-quantum protection before the link carrying a single tank level.</li>
+<li><strong>Put the question to vendors and carriers.</strong> Which key-exchange algorithms do your VPN, cellular, and satellite products negotiate, and when will hybrid ML-KEM be supported?</li>
+</ol>
+<p>Telemetry is not the crown jewel of a pipeline. But the traffic around it, the maps, credentials, and accumulated operating history, is exactly what someone patient would want to keep. The time to decide which links matter is before the recording becomes readable.</p>
+<hr />
+<p><em>Views are my own and do not represent any employer or client. This post uses only public sources and contains no non-public operator information. Byte counts and transmission times are computed in <a target="_blank" rel="noopener" href="https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/code/compute_stats.py"><code>code/compute_stats.py</code></a> from the published FIPS parameter sets and exclude protocol overhead.</em></p>
+<p><strong>Sources</strong></p>
+<ul>
+<li>The White House, <a target="_blank" rel="noopener" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/">Securing the Nation Against Advanced Cryptographic Attacks (EO 14412)</a>, June 22, 2026, Section 1.</li>
+<li>NIST, FIPS 203, <em>Module-Lattice-Based Key-Encapsulation Mechanism Standard</em>, August 2024.</li>
+<li>NIST, FIPS 204, <em>Module-Lattice-Based Digital Signature Standard</em>, August 2024.</li>
+<li>NIST, IR 8547 (initial public draft), <em>Transition to Post-Quantum Cryptography Standards</em>, November 2024.</li>
+<li>IETF, RFC 8784, <em>Mixing Preshared Keys in IKEv2 for Post-quantum Security</em>, 2020; RFC 9370, <em>Multiple Key Exchanges in IKEv2</em>, 2023.</li>
+<li>NSA, <em>Commercial National Security Algorithm Suite 2.0</em> (CNSA 2.0).</li>
+<li>M. Mosca, "Cybersecurity in an era with quantum computers: will we be ready?", <em>IEEE Security &amp; Privacy</em>, 2018.</li>
+</ul></div>
+  <p class="license">DOI: <a target="_blank" rel="noopener" href="https://doi.org/10.5281/zenodo.23130292">https://doi.org/10.5281/zenodo.23130292</a> (archived on Zenodo)</p>
+  <p class="license">Text licensed <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite as: Friday Ogochukwu Ikwuogu, “Harvest-now-decrypt-later for SCADA telemetry,” Quantum-Safe Pipeline Notes, issue 2, https://doi.org/10.5281/zenodo.23130292.</p>
 </article>
 </div>
 <script>

@@ -8,8 +8,8 @@ One issue per month, beginning with the September 2026 slot.
 
 | Issue | Series slot | Title | File |
 |---|---|---|---|
-| 01 | September 2026 | What EO 14412 means for a pipeline operator's certificate inventory | `posts/2026-09-eo-14412-certificate-inventory.md` |
-| 02 | October 2026 | Harvest-now-decrypt-later for SCADA telemetry | coming October 17, 2026 |
+| 01 | September 2026 | What EO 14412 means for a pipeline operator's certificate inventory | `posts/2026-09-eo-14412-certificate-inventory.md` · [doi:10.5281/zenodo.23130001](https://doi.org/10.5281/zenodo.23130001) |
+| 02 | October 2026 | Harvest-now-decrypt-later for SCADA telemetry | `posts/2026-10-hndl-scada-telemetry.md` · [doi:10.5281/zenodo.23130292](https://doi.org/10.5281/zenodo.23130292) |
 
 ## Repository layout
 
@@ -45,7 +45,5 @@ Copy a post file, set `issue`, `series_slot`, and `published`, write, remove the
 ## License and citation
 
 Posts: CC BY 4.0. Code: MIT. See `LICENSE` and `CITATION.cff`.
-
-Issue 01 (Version 1.0): [10.5281/zenodo.23130001](https://doi.org/10.5281/zenodo.23130001).
 
 Views are the author's own and do not represent any employer or client. All posts use public sources only.
