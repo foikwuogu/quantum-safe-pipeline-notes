@@ -1,0 +1,331 @@
+<title>Quantum-Safe Pipeline Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; the issue list is drawn as a pipeline with milepost markers, one per monthly issue. */
+:root{
+  --paper:#F2F4F3; --ink:#16222A; --muted:#55636D; --rule:#C8D0D3;
+  --link:#1D5C87; --marker:#F2C230; --marker-ink:#16222A; --verify:#FBE7A6;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10171C; --ink:#E2E7E9; --muted:#97A5AE; --rule:#2B3841;
+  --link:#86BDE3; --marker:#E8B923; --marker-ink:#10171C; --verify:#5A4A12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10171C; --ink:#E2E7E9; --muted:#97A5AE; --rule:#2B3841;
+  --link:#86BDE3; --marker:#E8B923; --marker-ink:#10171C; --verify:#5A4A12; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 1.0625rem/1.65 var(--body)}
+.wrap{max-width:44rem;margin:0 auto;padding-inline:20px;padding-block:0 4rem}
+a{color:var(--link);text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--link);outline-offset:3px;border-radius:2px}
+.draft{background:var(--marker);color:var(--marker-ink);font:500 .75rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;text-align:center;padding:.6rem 1rem}
+.mono{font-family:var(--mono);font-size:.82em}
+header.site{padding-block:3rem 2rem;border-bottom:1px solid var(--rule)}
+.kicker{font:500 .78rem/1.3 var(--mono);color:var(--muted);letter-spacing:.04em;margin:0 0 .75rem}
+h1.name{font:700 clamp(2.4rem,7vw,3.6rem)/.95 var(--display);text-transform:uppercase;letter-spacing:.01em;margin:0;text-wrap:balance}
+.tagline{margin:1rem 0 0;color:var(--muted);max-width:36rem}
+section.issues{padding-block:2rem}
+h2.label{font:600 .8rem/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 1.25rem}
+.line{position:relative;display:grid;gap:.25rem}
+.line::before{content:"";position:absolute;left:1.6rem;top:.5rem;bottom:.5rem;width:3px;background:var(--rule)}
+.entry{position:relative;display:grid;grid-template-columns:3.2rem minmax(0,1fr);gap:1rem;align-items:start;padding:.85rem 0;text-decoration:none;color:inherit}
+.mp{position:relative;z-index:1;justify-self:center;background:var(--marker);color:var(--marker-ink);font:700 .78rem/1 var(--display);letter-spacing:.04em;padding:.45rem .35rem;min-width:2.9rem;text-align:center;border-radius:2px}
+.entry-body{display:grid;gap:.2rem;min-width:0}
+.slot{font:500 .75rem/1.2 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.entry-title{font:600 1.45rem/1.15 var(--display);text-wrap:balance}
+a.entry:hover .entry-title{color:var(--link);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.entry-meta{font-size:.85rem;color:var(--muted)}
+.entry.planned .mp{background:var(--paper);color:var(--muted);outline:1.5px dashed var(--rule)}
+.entry.planned .entry-title{color:var(--muted);font-weight:500}
+footer.about{border-top:1px solid var(--rule);padding-block:2rem 0;font-size:.92rem;color:var(--muted);display:grid;gap:.4rem}
+footer.about strong{color:var(--ink);font:600 1.1rem/1.2 var(--display);letter-spacing:.02em}
+article.post{padding-block:2rem 0}
+.back{font:500 .8rem/1 var(--mono);text-decoration:none}
+.tag{font:500 .78rem/1.3 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:1.75rem 0 .5rem}
+.post h1{font:700 clamp(2rem,6vw,2.9rem)/1.02 var(--display);margin:0;text-wrap:balance}
+.byline{color:var(--muted);font-size:.9rem;margin:.9rem 0 2rem;padding-bottom:1.25rem;border-bottom:1px solid var(--rule)}
+.prose h2{font:600 1.6rem/1.15 var(--display);margin:2.4rem 0 .6rem;text-wrap:balance}
+.prose p,.prose li{max-width:65ch}
+.prose ul,.prose ol{padding-left:1.3rem}
+.prose li{margin:.35rem 0}
+.prose hr{border:0;border-top:1px solid var(--rule);margin:2.5rem 0 1.5rem}
+.prose code{font-family:var(--mono);font-size:.85em}
+.prose em{font-style:italic}
+.tablewrap{overflow-x:auto;margin:1.25rem 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;line-height:1.4;min-width:34rem}
+th{font:600 .72rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.05em;text-align:left;color:var(--muted);padding:.6rem .6rem .5rem}
+td{padding:.55rem .6rem;border-top:1px solid var(--rule);vertical-align:top}
+mark.verify{background:var(--verify);color:var(--ink);font:500 .78em/1.4 var(--mono);padding:0 .2em;border-radius:2px}
+.license{font-size:.85rem;color:var(--muted);margin-top:2.5rem}
+@media print{body{background:#fff}.wrap{max-width:none;padding:0}}
+@media (max-width:480px){.wrap{padding-inline:16px}.entry-title{font-size:1.25rem}}
+</style>
+
+<div class="wrap">
+  <main id="index">
+    <header class="site">
+      <p class="kicker">A technical blog · one issue per month from September 2026</p>
+      <h1 class="name">Quantum-Safe Pipeline Notes</h1>
+      <p class="tagline">Post-quantum cryptography and operational-technology security for U.S. oil and gas pipelines: what the new federal rules mean in the control room, and what operators can do about it now.</p>
+    </header>
+    <section class="issues" aria-labelledby="lbl">
+      <h2 class="label" id="lbl">Issues along the line</h2>
+      <div class="line">
+<a class="entry" href="#issue-1" data-go="issue-1">
+  <span class="mp">MP 01</span>
+  <span class="entry-body"><span class="slot">September 2026</span>
+  <span class="entry-title">What EO 14412 means for a pipeline operator&#x27;s certificate inventory</span>
+  <span class="entry-meta">7 min read · DOI 10.5281/zenodo.23130001</span></span></a>
+<a class="entry" href="#issue-2" data-go="issue-2">
+  <span class="mp">MP 02</span>
+  <span class="entry-body"><span class="slot">October 2026</span>
+  <span class="entry-title">Harvest-now-decrypt-later for SCADA telemetry</span>
+  <span class="entry-meta">6 min read · DOI 10.5281/zenodo.23130292</span></span></a>
+<div class="entry planned"><span class="mp">MP 03</span>
+  <span class="entry-body"><span class="slot">November 2026 · coming November 3</span>
+  <span class="entry-title">Finding the cryptography inside an OPC UA deployment</span></span></div>
+<div class="entry planned"><span class="mp">MP 04</span>
+  <span class="entry-body"><span class="slot">December 2026 · coming December 3</span>
+  <span class="entry-title">Before the FAR post-quantum rule: what OT vendors should be ready to answer</span></span></div>
+<div class="entry planned"><span class="mp">MP 05</span>
+  <span class="entry-body"><span class="slot">January 2027 · coming January 3, 2027</span>
+  <span class="entry-title">Hybrid key exchange over narrowband SCADA radio: modeling the cost</span></span></div>
+<div class="entry planned"><span class="mp">MP 06</span>
+  <span class="entry-body"><span class="slot">February 2027 · coming February 3, 2027</span>
+  <span class="entry-title">Firmware-signing roots and the 2040 problem</span></span></div>
+<div class="entry planned"><span class="mp">MP 07</span>
+  <span class="entry-body"><span class="slot">March 2027 · coming March 3, 2027</span>
+  <span class="entry-title">What a cryptographic bill of materials should tell a pipeline operator</span></span></div>
+      </div>
+    </section>
+    <footer class="about">
+      <strong>Friday Ogochukwu Ikwuogu</strong>
+      <span>Independent Researcher, Odessa, Texas, USA</span>
+      <span class="mono">ORCID 0009-0009-2222-1318 · Friday.ikwuogu@gmail.com</span>
+      <span>Views are the author's own and do not represent any employer or client. Posts use public sources only.</span>
+    </footer>
+  </main>
+<article class="post" id="issue-1" hidden>
+  <a class="back" href="#index" data-go="index">← All issues</a>
+  <p class="tag">Issue 01 · September 2026 slot</p>
+  <h1>What EO 14412 means for a pipeline operator&#x27;s certificate inventory</h1>
+  <p class="byline">Friday Ogochukwu Ikwuogu · <span class="mono">ORCID 0009-0009-2222-1318</span> · Published 2026-10-03 · 7 min read</p>
+  <div class="prose"><p>On June 22, 2026, the White House signed Executive Order 14412, <em>Securing the Nation Against Advanced Cryptographic Attacks</em>. It sets the federal government's deadlines for moving to post-quantum cryptography (PQC): high value assets and high impact systems must use PQC for key establishment by December 31, 2030, and for digital signatures by December 31, 2031.</p>
+<p>If you run cybersecurity for a natural gas or hazardous liquids pipeline, the honest first reading is that the order does not bind you directly. It is addressed to federal agencies. The order never mentions pipelines, energy, OT, or TSA. So why write about it for pipeline operators?</p>
+<p>Because the order reaches private critical infrastructure through three side doors, and all three lead to the same place: an inventory of where your systems use public-key cryptography. For most operators the most tractable piece of that inventory, and the right place to start, is certificates.</p>
+<h2>The three side doors</h2>
+<p><strong>1. Sector Risk Management Agencies.</strong> Section 5 directs the Sector Risk Management Agencies, working through CISA, to assist critical infrastructure owners and operators with PQC migration planning. Under National Security Memorandum 22 (April 2024), pipelines fall in the Transportation Systems sector, where DHS (through TSA) and the Department of Transportation are the SRMAs, and oil and natural gas also sit in the Energy sector, where the Department of Energy is the SRMA. "Assistance" is not a mandate, but it is how guidance becomes expectation.</p>
+<p><strong>2. Procurement.</strong> Within 180 days of signing (about December 19, 2026), the FAR Council must propose a rule requiring covered federal contractors to comply with NIST PQC standards by December 31, 2030. The SCADA, historian, firewall, and remote-access vendors that sell to federal customers sell to you too. Their product roadmaps will move on the federal clock, and their legacy firmware will stop being the default sooner than your asset lifecycle assumes.</p>
+<p><strong>3. The cryptographic bill of materials.</strong> Within 270 days (about March 19, 2027), CISA and NIST must publish guidance on the minimum elements of a cryptographic bill of materials (CBOM): a machine-readable statement of the cryptography inside a hardware or software product. Once that format exists, expect it to show up in vendor questionnaires, in assessment programs, and eventually in audit requests.</p>
+<p>Add to this the regulation that already binds you. Operators designated as critical under TSA's Security Directive Pipeline-2021-02 series maintain a TSA-approved Cybersecurity Implementation Plan, a Cybersecurity Incident Response Plan, and an annual Cybersecurity Assessment Plan for their Critical Cyber Systems. The directives do not yet ask about quantum-vulnerable algorithms. But an operator that can describe its authentication and encryption controls algorithm by algorithm is in a far better position when they do, and TSA's proposed rule <em>Enhancing Surface Cyber Risk Management</em> (89 FR 88488, November 7, 2024) shows the direction of travel toward codified, auditable cyber risk management. As of mid-2026 that rule had not been finalized.</p>
+<h2>Why certificates first</h2>
+<p>A full cryptographic inventory covers protocols, libraries, key stores, hardware security modules, and firmware. That is a multi-year project. Certificates are where you can start this month, for three reasons.</p>
+<ul>
+<li><strong>They are self-describing.</strong> Every X.509 certificate states its public-key algorithm, key size, signature algorithm, issuer, and validity period. You do not need vendor cooperation to read them.</li>
+<li><strong>They are where both of the order's deadlines meet.</strong> A certificate's key is often used for key establishment (the 2030 date) and its signature carries trust (the 2031 date).</li>
+<li><strong>OT certificates live a long time.</strong> In IT, public TLS certificates now turn over in months, and the CA/Browser Forum's schedule takes their maximum lifetime down to 47 days by 2029. In OT, a self-signed certificate generated when an HMI or historian was commissioned can carry a 10- or 20-year validity, and a vendor root of trust used to sign firmware can outlast the equipment generation that shipped it. Anything valid past December 31, 2031 is, by definition, a certificate that will need to be replaced or justified.</li>
+</ul>
+<h2>Where the certificates are in a pipeline environment</h2>
+<p>A starting map, from the enterprise edge toward the field:</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Location</th>
+<th>Typical certificate use</th>
+<th>Who usually controls renewal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Remote-access gateways and VPN concentrators</td>
+<td>Device identity, IKE/TLS authentication</td>
+<td>Operator (IT/OT security)</td>
+</tr>
+<tr>
+<td>Active Directory Certificate Services in the OT domain</td>
+<td>Smart-card logon, machine identity, LDAPS</td>
+<td>Operator</td>
+</tr>
+<tr>
+<td>Historian and HMI web servers</td>
+<td>HTTPS for thin clients and dashboards</td>
+<td>Operator, often self-signed by default</td>
+</tr>
+<tr>
+<td>OPC UA servers and clients</td>
+<td>Application instance certificates and trust lists</td>
+<td>Integrator or operator</td>
+</tr>
+<tr>
+<td>RTU, PLC, and flow-computer TLS (for example DNP3 or IEC 60870-5-104 secured per IEC 62351-3)</td>
+<td>Mutual TLS between control center and field</td>
+<td>Vendor tooling, operator-run</td>
+</tr>
+<tr>
+<td>Cellular and satellite backhaul equipment</td>
+<td>Management interfaces, IPsec</td>
+<td>Carrier or vendor</td>
+</tr>
+<tr>
+<td>Vendor firmware and software signing</td>
+<td>Code-signing roots embedded in devices</td>
+<td>Vendor only</td>
+</tr>
+</tbody>
+</table></div>
+<p>The last row deserves emphasis. You cannot replace a vendor's firmware-signing root yourself, and the devices that trust it may be in service until the 2040s. Those entries are less a task than a question to put to each vendor, in writing.</p>
+<h2>How to collect without disturbing the process</h2>
+<ol>
+<li><strong>Export before you scan.</strong> Engineering workstations, OPC UA trust-list folders, AD CS, and gateway admin consoles all let you export certificates without touching a field device.</li>
+<li><strong>Capture passively where you must.</strong> A SPAN or tap copy of control-center traffic shows server certificates in TLS 1.2 handshakes. TLS 1.3 encrypts the server certificate inside the handshake, so passive capture will miss TLS 1.3 servers entirely; those need export or host-side collection.</li>
+<li><strong>Keep active scanning on the IT side</strong> or inside planned maintenance windows, under your normal change control. Field devices with limited TLS stacks have been known to misbehave when probed.</li>
+<li><strong>Run everything through one parser.</strong> I have published a small companion tool, <a target="_blank" rel="noopener" href="https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/tools/cert_inventory.py"><code>cert_inventory.py</code></a>, that reads a folder of exported certificates and writes one CSV row per certificate: algorithm, key size, signature algorithm, validity, whether it is a CA, whether it outlives the 2031 signature date, and a first-pass priority. It never connects to a device. Columns the parser cannot know (asset, zone, whether it is part of a Critical Cyber System, who renews it, whether the device can change algorithms) are left for you to fill in.</li>
+</ol>
+<h2>A triage that fits the order's two deadlines</h2>
+<ul>
+<li><strong>Priority A: trust anchors and anything valid past 2031.</strong> Root and issuing CAs, firmware-signing roots, and long-lived self-signed device certificates. These have the longest replacement lead time and the most dependents. Ask vendors for their PQC signature roadmap now.</li>
+<li><strong>Priority B: quantum-vulnerable leaf certificates that renew on a cycle.</strong> RSA and elliptic-curve certificates that expire well before 2031. Replace them on their normal renewal schedule once your platform supports ML-DSA (FIPS 204) or hybrid certificates, and record which devices cannot.</li>
+<li><strong>Cross-cutting: key establishment that protects long-lived data.</strong> Where a certificate's key negotiates sessions carrying information that must stay confidential for years, the risk is not in 2030 but today, because traffic recorded now can be decrypted later. That is the subject of the next issue.</li>
+</ul>
+<h2>What I would do in the next 90 days</h2>
+<ol>
+<li>Name an owner for cryptographic inventory, the way the order requires each federal agency to name a PQC migration lead.</li>
+<li>Export certificates from the five or six systems in the table above that you control directly, and run them through one parser.</li>
+<li>Add an "algorithm" and "can change algorithm?" column to whatever asset inventory already supports your TSA Cybersecurity Implementation Plan.</li>
+<li>Send every OT vendor the same three questions: Which public-key algorithms does the product use, and where? Can they be changed by firmware update? When will you ship ML-KEM and ML-DSA support?</li>
+<li>Watch for the CISA/NIST CBOM guidance (due around March 19, 2027) and align your inventory fields to it when it lands.</li>
+</ol>
+<p>None of this requires a quantum computer to exist. It requires knowing what you have, which is what every cybersecurity program already claims to do.</p>
+<hr />
+<p><em>Views are my own and do not represent any employer or client. This post uses only public sources and contains no non-public operator information. It is not legal advice.</em></p>
+<p><strong>Sources</strong></p>
+<ul>
+<li>The White House, <a target="_blank" rel="noopener" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/">Securing the Nation Against Advanced Cryptographic Attacks (EO 14412)</a>, June 22, 2026.</li>
+<li>Skadden, <a target="_blank" rel="noopener" href="https://www.skadden.com/insights/publications/2026/06/new-executive-orders-and-government-strategy">New Executive Orders and Government Strategy Advance US Quantum Innovation and Mandate Post-Quantum Cryptography Transition</a>, June 2026.</li>
+<li>TSA, <a target="_blank" rel="noopener" href="https://www.tsa.gov/sd-and-ea">Security Directives and Emergency Amendments</a> (SD Pipeline-2021-02 series).</li>
+<li>Federal Register, <a target="_blank" rel="noopener" href="https://www.federalregister.gov/documents/2026/01/02/2025-24198/revision-of-agency-information-collection-activity-under-omb-review-pipeline-corporate-security">Pipeline Corporate Security Reviews and TSA Security Directive Pipeline-2021-02 Series, information collection notice</a>, January 2, 2026.</li>
+<li>Federal Register, <a target="_blank" rel="noopener" href="https://www.federalregister.gov/documents/2024/11/07/2024-24704/enhancing-surface-cyber-risk-management">Enhancing Surface Cyber Risk Management (proposed rule)</a>, November 7, 2024.</li>
+<li>NIST, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), August 2024.</li>
+</ul></div>
+  <p class="license">DOI: <a target="_blank" rel="noopener" href="https://doi.org/10.5281/zenodo.23130001">https://doi.org/10.5281/zenodo.23130001</a> (archived on Zenodo)</p>
+  <p class="license">Text licensed <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite as: Friday Ogochukwu Ikwuogu, “What EO 14412 means for a pipeline operator&#x27;s certificate inventory,” Quantum-Safe Pipeline Notes, issue 1, https://doi.org/10.5281/zenodo.23130001.</p>
+</article>
+<article class="post" id="issue-2" hidden>
+  <a class="back" href="#index" data-go="index">← All issues</a>
+  <p class="tag">Issue 02 · October 2026 slot</p>
+  <h1>Harvest-now-decrypt-later for SCADA telemetry</h1>
+  <p class="byline">Friday Ogochukwu Ikwuogu · <span class="mono">ORCID 0009-0009-2222-1318</span> · Published 2026-10-03 · 6 min read</p>
+  <div class="prose"><p>Executive Order 14412 opens by naming the threat that makes post-quantum migration urgent before any quantum computer exists: adversaries recording encrypted U.S. data today so they can decrypt it once a cryptographically relevant quantum computer is available. Security people call it harvest-now-decrypt-later, or HNDL.</p>
+<p>HNDL is usually discussed in terms of diplomatic cables, health records, and trade secrets. This post asks a narrower question: does it matter for the telemetry that moves between a pipeline control center and its field sites? My answer is yes, but not where most people look first, and not before a more basic problem.</p>
+<h2>First, the uncomfortable baseline</h2>
+<p>HNDL assumes the traffic is encrypted. A great deal of SCADA telemetry is not. Modbus and DNP3 were designed for closed serial networks, and many links still carry them in cleartext, sometimes inside a VPN tunnel across the WAN, sometimes not even that. For cleartext links the threat model is simpler and worse: harvest now, read now. No quantum computer required.</p>
+<p>So the first-order fix is still the old one: encrypt and authenticate the links that are not. The quantum question changes <em>how</em> you should do that, because every link you encrypt this year with classical key exchange becomes a link an adversary can record and set aside.</p>
+<h2>Where the vulnerable math sits in a telemetry path</h2>
+<p>Quantum attacks threaten the public-key parts of a protocol, the parts that agree on keys and prove identity. The symmetric parts that actually encrypt the bulk data (AES) and authenticate messages (HMAC) are only modestly weakened, and NIST continues to treat AES with 128-bit and larger keys as acceptable. In a typical pipeline telemetry path, the public-key exposure sits in:</p>
+<ul>
+<li><strong>WAN VPNs</strong> (IPsec with IKEv2), where Diffie-Hellman or elliptic-curve Diffie-Hellman sets up the tunnel keys.</li>
+<li><strong>TLS</strong> wrapping DNP3 or IEC 60870-5-104 under IEC 62351-3, and TLS to cloud historians and MQTT brokers.</li>
+<li><strong>OPC UA secure channels</strong>, whose standard security policies use RSA or elliptic curves for key agreement and signatures.</li>
+<li><strong>Cellular and satellite backhaul</strong>, where the carrier or vendor IPsec configuration decides the algorithms.</li>
+<li><strong>DNP3 Secure Authentication</strong>, whose session keys are symmetric (HMAC) but whose optional asymmetric update-key change method in IEEE 1815-2012 relies on classical public-key cryptography.</li>
+</ul>
+<p>An adversary who records the handshake and the session today can, with a sufficiently capable quantum computer later, recover the session key from the handshake and read everything that followed.</p>
+<h2>The shelf-life test</h2>
+<p>The useful tool here is Michele Mosca's inequality. Let <strong>x</strong> be how long the data must stay confidential, <strong>y</strong> how long your migration will take, and <strong>z</strong> how long until a cryptographically relevant quantum computer exists. If x + y is greater than z, data you send today is already at risk.</p>
+<p>Nobody knows z. The federal deadlines in EO 14412 (2030 for key establishment, 2031 for signatures) and NIST's proposed transition schedule in NIST IR 8547 (released as an initial public draft in November 2024: RSA and elliptic-curve algorithms at the 112-bit security level deprecated after 2030, and all of them disallowed after 2035) tell you where the government has placed its bet. For an operator, y is the number you control, and for field equipment it is measured in years.</p>
+<p>Applying x to telemetry is where judgment comes in. Here is how I classify it:</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>What crosses the link</th>
+<th>How long it stays sensitive (x)</th>
+<th>HNDL concern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Individual pressure, flow, and temperature readings</td>
+<td>Minutes to hours</td>
+<td>Low on its own</td>
+</tr>
+<tr>
+<td>Aggregated operating history (normal envelopes, setpoints, seasonal patterns, compressor run profiles)</td>
+<td>Years</td>
+<td>Moderate: reveals how the system behaves and where its margins are</td>
+</tr>
+<tr>
+<td>Network and asset detail visible in traffic (device addresses, models, firmware versions, polling schedules)</td>
+<td>Years, until the equipment is replaced</td>
+<td>High: a map for a future intrusion</td>
+</tr>
+<tr>
+<td>Credentials, keys, and engineering files sent over the link (logins, configuration downloads, ladder logic)</td>
+<td>As long as they remain valid</td>
+<td>Highest: a recorded password that is never rotated is a future login</td>
+</tr>
+<tr>
+<td>Commercial data (nominations, custody-transfer measurement)</td>
+<td>Months to years</td>
+<td>Moderate</td>
+</tr>
+</tbody>
+</table></div>
+<p>The pattern is that the single reading is rarely the prize. The prize is the accumulated picture, and anything in the stream that stays valid for years.</p>
+<h2>Integrity is a different clock</h2>
+<p>HNDL is a confidentiality problem. The more dangerous failure for a pipeline is integrity: a forged command or forged firmware. Forging a signature requires the quantum capability at the moment of attack, so it is not a "harvest now" risk. But it has its own long tail: a firmware-signing key or root certificate deployed today may still be trusted by field devices when that capability arrives. That is why the previous issue put long-lived trust anchors at the top of the certificate inventory.</p>
+<h2>OT bandwidth makes this an engineering problem, not a checkbox</h2>
+<p>Post-quantum key exchange is not free on narrow links. Using the sizes in FIPS 203:</p>
+<ul>
+<li>An ML-KEM-768 exchange (encapsulation key plus ciphertext) moves <strong>2,272 bytes</strong>; a classical X25519 exchange moves <strong>64 bytes</strong>, about <strong>36 times</strong> less.</li>
+<li>On a 9,600 bps serial radio, that ML-KEM payload alone takes about <strong>1.89 seconds</strong> to transmit, against roughly <strong>0.05 seconds</strong> for X25519, before protocol overhead or retries. At 19,200 bps it is about <strong>0.95 seconds</strong>.</li>
+<li>Signatures are larger still. An ML-DSA-65 public key plus one signature (FIPS 204) is <strong>5,261 bytes</strong>, about <strong>4.38 seconds</strong> at 9,600 bps.</li>
+</ul>
+<p>On a fiber or LTE link these are rounding errors. On a licensed radio polling dozens of remote sites, they change poll cycles. The practical implications: do key establishment rarely and rekey symmetric sessions in between; terminate post-quantum tunnels at the most capable hop instead of at every RTU; and test on the actual link before committing to a design.</p>
+<h2>What to do now, in order</h2>
+<ol>
+<li><strong>Close the cleartext gap.</strong> Inventory links that carry SCADA protocols without encryption or authentication. That is today's exposure, quantum or not.</li>
+<li><strong>Prefer hybrid key exchange when you encrypt.</strong> Hybrid schemes combine a classical algorithm with ML-KEM, so a link is at least as strong as the stronger of the two. The TLS 1.3 hybrid group X25519MLKEM768 ships in OpenSSL 3.5 and is on by default in major browsers, and IKEv2 has standards for adding post-quantum protection (RFC 8784 for mixing in pre-shared keys; RFC 9370 for multiple key exchanges). Support in OT gateways and field devices varies, so check each product.</li>
+<li><strong>Use AES-256 for long-lived links.</strong> It is cheap insurance and matches NSA's CNSA 2.0 suite.</li>
+<li><strong>Shrink what is worth harvesting.</strong> Keep engineering downloads and credential exchange off long-haul links where possible, rotate credentials that cross them, and avoid static secrets that never change.</li>
+<li><strong>Rank links by shelf life, not by bandwidth.</strong> The link carrying configuration files and remote-access sessions deserves post-quantum protection before the link carrying a single tank level.</li>
+<li><strong>Put the question to vendors and carriers.</strong> Which key-exchange algorithms do your VPN, cellular, and satellite products negotiate, and when will hybrid ML-KEM be supported?</li>
+</ol>
+<p>Telemetry is not the crown jewel of a pipeline. But the traffic around it, the maps, credentials, and accumulated operating history, is exactly what someone patient would want to keep. The time to decide which links matter is before the recording becomes readable.</p>
+<hr />
+<p><em>Views are my own and do not represent any employer or client. This post uses only public sources and contains no non-public operator information. Byte counts and transmission times are computed in <a target="_blank" rel="noopener" href="https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/code/compute_stats.py"><code>code/compute_stats.py</code></a> from the published FIPS parameter sets and exclude protocol overhead.</em></p>
+<p><strong>Sources</strong></p>
+<ul>
+<li>The White House, <a target="_blank" rel="noopener" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/">Securing the Nation Against Advanced Cryptographic Attacks (EO 14412)</a>, June 22, 2026, Section 1.</li>
+<li>NIST, FIPS 203, <em>Module-Lattice-Based Key-Encapsulation Mechanism Standard</em>, August 2024.</li>
+<li>NIST, FIPS 204, <em>Module-Lattice-Based Digital Signature Standard</em>, August 2024.</li>
+<li>NIST, IR 8547 (initial public draft), <em>Transition to Post-Quantum Cryptography Standards</em>, November 2024.</li>
+<li>IETF, RFC 8784, <em>Mixing Preshared Keys in IKEv2 for Post-quantum Security</em>, 2020; RFC 9370, <em>Multiple Key Exchanges in IKEv2</em>, 2023.</li>
+<li>NSA, <em>Commercial National Security Algorithm Suite 2.0</em> (CNSA 2.0).</li>
+<li>M. Mosca, "Cybersecurity in an era with quantum computers: will we be ready?", <em>IEEE Security &amp; Privacy</em>, 2018.</li>
+</ul></div>
+  <p class="license">DOI: <a target="_blank" rel="noopener" href="https://doi.org/10.5281/zenodo.23130292">https://doi.org/10.5281/zenodo.23130292</a> (archived on Zenodo)</p>
+  <p class="license">Text licensed <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite as: Friday Ogochukwu Ikwuogu, “Harvest-now-decrypt-later for SCADA telemetry,” Quantum-Safe Pipeline Notes, issue 2, https://doi.org/10.5281/zenodo.23130292.</p>
+</article>
+</div>
+<script>
+(function(){
+  var views=[].slice.call(document.querySelectorAll('main#index, article.post'));
+  function show(id){
+    var found=views.some(function(v){return v.id===id});
+    if(!found) id='index';
+    views.forEach(function(v){v.hidden=(v.id!==id)});
+    window.scrollTo(0,0);
+  }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('[data-go]'); if(!a) return;
+    e.preventDefault(); var id=a.getAttribute('data-go');
+    try{history.pushState(null,'','#'+id)}catch(err){}
+    show(id);
+  });
+  window.addEventListener('popstate',function(){show((location.hash||'#index').slice(1))});
+  show((location.hash||'#index').slice(1));
+})();
+</script>
