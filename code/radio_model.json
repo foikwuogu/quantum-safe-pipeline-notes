@@ -1,0 +1,47 @@
+{
+  "rows": [
+    {
+      "key_exchange": "X25519",
+      "signature": "ECDSA P-256",
+      "mutual_tls_crypto_bytes": 450,
+      "secs_at_1200bps_async": 3.75,
+      "secs_at_9600bps_async": 0.47,
+      "secs_at_19200bps_async": 0.23,
+      "secs_at_64000bps_async": 0.07
+    },
+    {
+      "key_exchange": "X25519MLKEM768 (hybrid)",
+      "signature": "ECDSA P-256",
+      "mutual_tls_crypto_bytes": 2722,
+      "secs_at_1200bps_async": 22.68,
+      "secs_at_9600bps_async": 2.84,
+      "secs_at_19200bps_async": 1.42,
+      "secs_at_64000bps_async": 0.43
+    },
+    {
+      "key_exchange": "X25519MLKEM768 (hybrid)",
+      "signature": "ML-DSA-44",
+      "mutual_tls_crypto_bytes": 14640,
+      "secs_at_1200bps_async": 122.0,
+      "secs_at_9600bps_async": 15.25,
+      "secs_at_19200bps_async": 7.62,
+      "secs_at_64000bps_async": 2.29
+    },
+    {
+      "key_exchange": "X25519MLKEM768 (hybrid)",
+      "signature": "ML-DSA-65",
+      "mutual_tls_crypto_bytes": 19476,
+      "secs_at_1200bps_async": 162.3,
+      "secs_at_9600bps_async": 20.29,
+      "secs_at_19200bps_async": 10.14,
+      "secs_at_64000bps_async": 3.04
+    }
+  ],
+  "rates_bps": [
+    1200,
+    9600,
+    19200,
+    64000
+  ],
+  "note": "lower bound: crypto payload only, mutual TLS, no chain beyond leaf, no retries"
+}

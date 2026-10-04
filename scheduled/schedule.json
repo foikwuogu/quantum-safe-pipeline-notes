@@ -1,0 +1,37 @@
+[
+  {
+    "file": "2026-11-opc-ua-cryptography.md",
+    "issue": 3,
+    "series_slot": "November 2026",
+    "title": "Finding the cryptography inside an OPC UA deployment",
+    "release_date": "2026-11-03"
+  },
+  {
+    "file": "2026-12-far-pqc-rule-ot-vendors.md",
+    "issue": 4,
+    "series_slot": "December 2026",
+    "title": "Before the FAR post-quantum rule: what OT vendors should be ready to answer",
+    "release_date": "2026-12-03"
+  },
+  {
+    "file": "2027-01-hybrid-kex-narrowband-radio.md",
+    "issue": 5,
+    "series_slot": "January 2027",
+    "title": "Hybrid key exchange over narrowband SCADA radio: modeling the cost",
+    "release_date": "2027-01-03"
+  },
+  {
+    "file": "2027-02-firmware-signing-roots.md",
+    "issue": 6,
+    "series_slot": "February 2027",
+    "title": "Firmware-signing roots and the 2040 problem",
+    "release_date": "2027-02-03"
+  },
+  {
+    "file": "2027-03-cbom-for-pipeline-operators.md",
+    "issue": 7,
+    "series_slot": "March 2027",
+    "title": "What a cryptographic bill of materials should tell a pipeline operator",
+    "release_date": "2027-03-03"
+  }
+]

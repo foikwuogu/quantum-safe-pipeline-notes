@@ -7,6 +7,25 @@ author: Friday Ogochukwu Ikwuogu
 license: CC BY 4.0
 status: published
 doi: "10.5281/zenodo.23130292"
+archive: manual  # DOI made by hand on Zenodo; no GitHub Release is created for this issue
+summary: |
+  Harvest-now-decrypt-later (HNDL) is the threat EO 14412 names first: adversaries recording encrypted traffic today to decrypt once a cryptographically relevant quantum computer exists. This note asks whether HNDL matters for pipeline SCADA telemetry, starting from the fact that much SCADA traffic still crosses links unencrypted.
+
+  It locates the quantum-vulnerable public-key operations in typical telemetry paths, applies Mosca's inequality to classify telemetry by how long it stays sensitive, separates the HNDL confidentiality risk from the long-term risk to signing keys, and quantifies the bandwidth cost of ML-KEM and ML-DSA on narrowband links (an ML-KEM-768 exchange moves 2,272 bytes versus 64 for X25519, about 1.89 seconds at 9,600 bps). It closes with six prioritized actions for operators.
+keywords:
+- post-quantum cryptography
+- harvest-now-decrypt-later
+- SCADA
+- DNP3
+- operational technology
+- pipeline security
+- ML-KEM
+- ML-DSA
+- hybrid key exchange
+- IEC 62351
+supplements:
+- url: https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/code/compute_stats.py
+  type: software
 ---
 
 # Harvest-now-decrypt-later for SCADA telemetry

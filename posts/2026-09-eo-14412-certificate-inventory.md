@@ -6,6 +6,26 @@ published: "2026-10-03"
 author: Friday Ogochukwu Ikwuogu
 license: CC BY 4.0
 status: published
+doi: "10.5281/zenodo.23130001"
+archive: manual  # DOI made by hand on Zenodo; no GitHub Release is created for this issue
+summary: |
+  Executive Order 14412 (June 22, 2026) sets federal deadlines for post-quantum cryptography: key establishment by December 31, 2030 and digital signatures by December 31, 2031. The order is addressed to federal agencies and does not mention pipelines, but it reaches private critical infrastructure through Sector Risk Management Agency assistance, a forthcoming FAR rule for federal contractors, and CISA/NIST guidance on a cryptographic bill of materials.
+
+  This note argues that a pipeline operator's practical first step is an inventory of X.509 certificates in operational technology. It maps where certificates live in pipeline OT, explains how to collect them without disturbing the process, proposes a triage aligned to the order's two deadlines, and lists five actions for the next 90 days. A companion tool, cert_inventory.py, builds the inventory from exported certificates without connecting to any device.
+keywords:
+- post-quantum cryptography
+- Executive Order 14412
+- operational technology
+- SCADA
+- pipeline security
+- certificate inventory
+- X.509
+- PKI
+- critical infrastructure
+- cryptographic bill of materials
+supplements:
+- url: https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/tools/cert_inventory.py
+  type: software
 ---
 
 # What EO 14412 means for a pipeline operator's certificate inventory
