@@ -1,0 +1,16 @@
+{
+  "eo_signed": "2026-06-22",
+  "eo_day30": "2026-07-22",
+  "eo_day90": "2026-09-20",
+  "eo_day180": "2026-12-19",
+  "eo_day270": "2027-03-19",
+  "mlkem768_exchange_bytes": 2272,
+  "x25519_exchange_bytes": 64,
+  "hybrid_exchange_bytes": 2336,
+  "kem_ratio_vs_x25519": 36,
+  "mlkem768_secs_9600bps": 1.89,
+  "mlkem768_secs_19200bps": 0.95,
+  "x25519_secs_9600bps": 0.05,
+  "mldsa65_pk_plus_sig_bytes": 5261,
+  "mldsa65_secs_9600bps": 4.38
+}

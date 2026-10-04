@@ -1,0 +1,106 @@
+<title>Quantum-Safe Pipeline Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; the issue list is drawn as a pipeline with milepost markers, one per monthly issue. */
+:root{
+  --paper:#F2F4F3; --ink:#16222A; --muted:#55636D; --rule:#C8D0D3;
+  --link:#1D5C87; --marker:#F2C230; --marker-ink:#16222A; --verify:#FBE7A6;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10171C; --ink:#E2E7E9; --muted:#97A5AE; --rule:#2B3841;
+  --link:#86BDE3; --marker:#E8B923; --marker-ink:#10171C; --verify:#5A4A12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10171C; --ink:#E2E7E9; --muted:#97A5AE; --rule:#2B3841;
+  --link:#86BDE3; --marker:#E8B923; --marker-ink:#10171C; --verify:#5A4A12; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 1.0625rem/1.65 var(--body)}
+.wrap{max-width:44rem;margin:0 auto;padding-inline:20px;padding-block:0 4rem}
+a{color:var(--link);text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--link);outline-offset:3px;border-radius:2px}
+.draft{background:var(--marker);color:var(--marker-ink);font:500 .75rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;text-align:center;padding:.6rem 1rem}
+.mono{font-family:var(--mono);font-size:.82em}
+header.site{padding-block:3rem 2rem;border-bottom:1px solid var(--rule)}
+.kicker{font:500 .78rem/1.3 var(--mono);color:var(--muted);letter-spacing:.04em;margin:0 0 .75rem}
+h1.name{font:700 clamp(2.4rem,7vw,3.6rem)/.95 var(--display);text-transform:uppercase;letter-spacing:.01em;margin:0;text-wrap:balance}
+.tagline{margin:1rem 0 0;color:var(--muted);max-width:36rem}
+section.issues{padding-block:2rem}
+h2.label{font:600 .8rem/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 1.25rem}
+.line{position:relative;display:grid;gap:.25rem}
+.line::before{content:"";position:absolute;left:1.6rem;top:.5rem;bottom:.5rem;width:3px;background:var(--rule)}
+.entry{position:relative;display:grid;grid-template-columns:3.2rem minmax(0,1fr);gap:1rem;align-items:start;padding:.85rem 0;text-decoration:none;color:inherit}
+.mp{position:relative;z-index:1;justify-self:center;background:var(--marker);color:var(--marker-ink);font:700 .78rem/1 var(--display);letter-spacing:.04em;padding:.45rem .35rem;min-width:2.9rem;text-align:center;border-radius:2px}
+.entry-body{display:grid;gap:.2rem;min-width:0}
+.slot{font:500 .75rem/1.2 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.entry-title{font:600 1.45rem/1.15 var(--display);text-wrap:balance}
+a.entry:hover .entry-title{color:var(--link);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.entry-meta{font-size:.85rem;color:var(--muted)}
+.entry.planned .mp{background:var(--paper);color:var(--muted);outline:1.5px dashed var(--rule)}
+.entry.planned .entry-title{color:var(--muted);font-weight:500}
+footer.about{border-top:1px solid var(--rule);padding-block:2rem 0;font-size:.92rem;color:var(--muted);display:grid;gap:.4rem}
+footer.about strong{color:var(--ink);font:600 1.1rem/1.2 var(--display);letter-spacing:.02em}
+article.post{padding-block:2rem 0}
+.back{font:500 .8rem/1 var(--mono);text-decoration:none}
+.tag{font:500 .78rem/1.3 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:1.75rem 0 .5rem}
+.post h1{font:700 clamp(2rem,6vw,2.9rem)/1.02 var(--display);margin:0;text-wrap:balance}
+.byline{color:var(--muted);font-size:.9rem;margin:.9rem 0 2rem;padding-bottom:1.25rem;border-bottom:1px solid var(--rule)}
+.prose h2{font:600 1.6rem/1.15 var(--display);margin:2.4rem 0 .6rem;text-wrap:balance}
+.prose p,.prose li{max-width:65ch}
+.prose ul,.prose ol{padding-left:1.3rem}
+.prose li{margin:.35rem 0}
+.prose hr{border:0;border-top:1px solid var(--rule);margin:2.5rem 0 1.5rem}
+.prose code{font-family:var(--mono);font-size:.85em}
+.prose em{font-style:italic}
+.tablewrap{overflow-x:auto;margin:1.25rem 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;line-height:1.4;min-width:34rem}
+th{font:600 .72rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.05em;text-align:left;color:var(--muted);padding:.6rem .6rem .5rem}
+td{padding:.55rem .6rem;border-top:1px solid var(--rule);vertical-align:top}
+mark.verify{background:var(--verify);color:var(--ink);font:500 .78em/1.4 var(--mono);padding:0 .2em;border-radius:2px}
+.license{font-size:.85rem;color:var(--muted);margin-top:2.5rem}
+@media (max-width:480px){.wrap{padding-inline:16px}.entry-title{font-size:1.25rem}}
+</style>
+{{DRAFT}}
+<div class="wrap">
+  <main id="index">
+    <header class="site">
+      <p class="kicker">A technical blog · one issue per month from September 2026</p>
+      <h1 class="name">Quantum-Safe Pipeline Notes</h1>
+      <p class="tagline">Post-quantum cryptography and operational-technology security for U.S. oil and gas pipelines: what the new federal rules mean in the control room, and what operators can do about it now.</p>
+    </header>
+    <section class="issues" aria-labelledby="lbl">
+      <h2 class="label" id="lbl">Issues along the line</h2>
+      <div class="line">
+{{ENTRIES}}
+      </div>
+    </section>
+    <footer class="about">
+      <strong>{{NAME}}</strong>
+      <span>{{AFFIL}}</span>
+      <span class="mono">ORCID {{ORCID}} · {{EMAIL}}</span>
+      <span>Views are the author's own and do not represent any employer or client. Posts use public sources only.</span>
+    </footer>
+  </main>
+{{ARTICLES}}
+</div>
+<script>
+(function(){
+  var views=[].slice.call(document.querySelectorAll('main#index, article.post'));
+  function show(id){
+    var found=views.some(function(v){return v.id===id});
+    if(!found) id='index';
+    views.forEach(function(v){v.hidden=(v.id!==id)});
+    window.scrollTo(0,0);
+  }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('[data-go]'); if(!a) return;
+    e.preventDefault(); var id=a.getAttribute('data-go');
+    try{history.pushState(null,'','#'+id)}catch(err){}
+    show(id);
+  });
+  window.addEventListener('popstate',function(){show((location.hash||'#index').slice(1))});
+  show((location.hash||'#index').slice(1));
+})();
+</script>

@@ -1,0 +1,15 @@
+{
+  "authors": [
+    {
+      "name": "Friday Ogochukwu Ikwuogu",
+      "family": "Ikwuogu",
+      "given": "Friday Ogochukwu",
+      "orcid": "0009-0009-2222-1318",
+      "email": "Friday.ikwuogu@gmail.com",
+      "affiliation": "Independent Researcher, Odessa, Texas, USA",
+      "roles": ["Conceptualization", "Writing - original draft", "Software"],
+      "corresponding": true
+    }
+  ],
+  "collaborators": []
+}

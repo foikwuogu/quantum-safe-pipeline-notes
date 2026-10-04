@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you cite a post from this series, please cite it as below."
+type: generic
+title: "Quantum-Safe Pipeline Notes: a technical blog on post-quantum cryptography and OT security for U.S. pipelines"
+version: "0.1.0"
+date-released: "2026-10-03"
+authors:
+  - family-names: "Ikwuogu"
+    given-names: "Friday Ogochukwu"
+    orcid: "https://orcid.org/0009-0009-2222-1318"
+    email: "Friday.ikwuogu@gmail.com"
+    affiliation: "Independent Researcher, Odessa, Texas, USA"
+license: CC-BY-4.0
+repository-code: "https://github.com/foikwuogu/quantum-safe-pipeline-notes"
+url: "https://foikwuogu.github.io/quantum-safe-pipeline-notes/"
+keywords:
+  - post-quantum cryptography
+  - operational technology
+  - SCADA
+  - pipeline security
+  - EO 14412
+  - harvest-now-decrypt-later
