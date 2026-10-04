@@ -1,5 +1,8 @@
 name: Publish scheduled issues
 
+# Daily at 11:15 UTC (early morning in Texas), on every push to main, and on demand.
+# Order matters: the released post and its PDF are committed BEFORE the GitHub Release is
+# created, so the release (and the Zenodo archive made from it) contains them.
 on:
   schedule:
     - cron: "15 11 * * *"
@@ -35,10 +38,19 @@ jobs:
           python -m pip install cryptography markdown playwright pyyaml requests
           python -m playwright install --with-deps chromium
 
-      - name: Release scheduled posts
+      - name: Check the DRAFTS_KEY secret can unlock the scheduled posts
+        env:
+          DRAFTS_KEY: ${{ secrets.DRAFTS_KEY }}
+        run: python code/release_due.py --check-key
+
+      - name: Release scheduled posts whose date has arrived
         env:
           DRAFTS_KEY: ${{ secrets.DRAFTS_KEY }}
         run: python code/release_due.py
+
+      - name: Add Zenodo DOIs minted since the last run
+        continue-on-error: true
+        run: python code/find_dois.py
 
       - name: Build published site
         run: python site/build.py --final
@@ -46,27 +58,22 @@ jobs:
       - name: Render issue PDFs
         run: python code/render_pdfs.py
 
-      - name: Create GitHub releases for Zenodo archiving
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python code/release_notes.py --github
+      - name: Write release notes
+        run: python code/release_notes.py
 
-      - name: Add Zenodo DOIs when available
-        run: python code/find_dois.py
-
-      - name: Rebuild site and release notes with DOI updates
-        run: |
-          python site/build.py --final
-          python code/release_notes.py
-
-      - name: Commit and push generated updates
+      - name: Commit and push the released post, PDF, DOIs, site, and notes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add -A posts scheduled docs pdf RELEASE_NOTES.md
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
             git commit -m "Publish scheduled content and rebuild site"
             git push
           fi
+
+      - name: Create GitHub releases for Zenodo archiving
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python code/release_notes.py --github
