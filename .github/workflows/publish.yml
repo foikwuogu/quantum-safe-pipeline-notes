@@ -1,0 +1,72 @@
+name: Publish scheduled issues
+
+on:
+  schedule:
+    - cron: "15 11 * * *"
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install publishing dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install cryptography markdown playwright pyyaml requests
+          python -m playwright install --with-deps chromium
+
+      - name: Release scheduled posts
+        env:
+          DRAFTS_KEY: ${{ secrets.DRAFTS_KEY }}
+        run: python code/release_due.py
+
+      - name: Build published site
+        run: python site/build.py --final
+
+      - name: Render issue PDFs
+        run: python code/render_pdfs.py
+
+      - name: Create GitHub releases for Zenodo archiving
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python code/release_notes.py --github
+
+      - name: Add Zenodo DOIs when available
+        run: python code/find_dois.py
+
+      - name: Rebuild site and release notes with DOI updates
+        run: |
+          python site/build.py --final
+          python code/release_notes.py
+
+      - name: Commit and push generated updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+          else
+            git commit -m "Publish scheduled content and rebuild site"
+            git push
+          fi
