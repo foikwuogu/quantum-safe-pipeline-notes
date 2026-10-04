@@ -46,4 +46,6 @@ Copy a post file, set `issue`, `series_slot`, and `published`, write, remove the
 
 Posts: CC BY 4.0. Code: MIT. See `LICENSE` and `CITATION.cff`.
 
+Issue 01 (Version 1.0): [10.5281/zenodo.23130001](https://doi.org/10.5281/zenodo.23130001).
+
 Views are the author's own and do not represent any employer or client. All posts use public sources only.
