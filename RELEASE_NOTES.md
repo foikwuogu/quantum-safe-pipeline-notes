@@ -2,6 +2,25 @@
 
 Quantum-Safe Pipeline Notes: one issue per month on post-quantum cryptography and OT security for U.S. pipelines. Each issue is released on its date and archived on Zenodo with its own DOI.
 
+## Issue 03: Finding the cryptography inside an OPC UA deployment
+
+**Series slot:** November 2026  
+**Published:** 2026-11-03  
+**Read it:** https://foikwuogu.github.io/quantum-safe-pipeline-notes/#issue-3  
+**Archived:** Zenodo DOI pending (added automatically once minted)  
+**PDF:** [`pdf/2026-11-opc-ua-cryptography.pdf`](https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/pdf/2026-11-opc-ua-cryptography.pdf)  
+**Source:** [`posts/2026-11-opc-ua-cryptography.md`](https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/posts/2026-11-opc-ua-cryptography.md)
+
+OPC UA is the OT protocol most likely to be doing real public-key cryptography in a pipeline control center, and every security policy it currently defines relies on quantum-vulnerable RSA or elliptic-curve cryptography. No post-quantum OPC UA security policy exists yet, so the practical goal is to know exactly where each policy is in use.
+
+This note explains how OPC UA secure channels use public-key cryptography and shows four places to find it: endpoint configuration, certificate stores and trust lists, the OpenSecureChannel handshake (whose security policy and certificate are readable even on encrypted channels), and the embedded cryptographic library. It defines inventory fields for OPC UA applications and lists six actions, including removing deprecated SHA-1 policies, closing None endpoints, and moving certificate issuance to a Global Discovery Server or internal CA.
+
+**Companion code:** [`tools/cert_inventory.py`](https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/tools/cert_inventory.py)
+
+**Cite as:** Friday Ogochukwu Ikwuogu, "Finding the cryptography inside an OPC UA deployment," Quantum-Safe Pipeline Notes, issue 3, 2026.
+
+License: text CC BY 4.0; code MIT.
+
 ## Issue 02: Harvest-now-decrypt-later for SCADA telemetry
 
 **Series slot:** October 2026  

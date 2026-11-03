@@ -92,9 +92,11 @@ mark.verify{background:var(--verify);color:var(--ink);font:500 .78em/1.4 var(--m
   <span class="entry-body"><span class="slot">October 2026</span>
   <span class="entry-title">Harvest-now-decrypt-later for SCADA telemetry</span>
   <span class="entry-meta">6 min read · DOI 10.5281/zenodo.23130292</span></span></a>
-<div class="entry planned"><span class="mp">MP 03</span>
-  <span class="entry-body"><span class="slot">November 2026 · coming November 3</span>
-  <span class="entry-title">Finding the cryptography inside an OPC UA deployment</span></span></div>
+<a class="entry" href="#issue-3" data-go="issue-3">
+  <span class="mp">MP 03</span>
+  <span class="entry-body"><span class="slot">November 2026</span>
+  <span class="entry-title">Finding the cryptography inside an OPC UA deployment</span>
+  <span class="entry-meta">6 min read</span></span></a>
 <div class="entry planned"><span class="mp">MP 04</span>
   <span class="entry-body"><span class="slot">December 2026 · coming December 3</span>
   <span class="entry-title">Before the FAR post-quantum rule: what OT vendors should be ready to answer</span></span></div>
@@ -316,6 +318,146 @@ mark.verify{background:var(--verify);color:var(--ink);font:500 .78em/1.4 var(--m
 </ul></div>
   <p class="license">DOI: <a target="_blank" rel="noopener" href="https://doi.org/10.5281/zenodo.23130292">https://doi.org/10.5281/zenodo.23130292</a> (archived on Zenodo)</p>
   <p class="license">Text licensed <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite as: Friday Ogochukwu Ikwuogu, “Harvest-now-decrypt-later for SCADA telemetry,” Quantum-Safe Pipeline Notes, issue 2, https://doi.org/10.5281/zenodo.23130292.</p>
+</article>
+<article class="post" id="issue-3" hidden>
+  <a class="back" href="#index" data-go="index">← All issues</a>
+  <p class="tag">Issue 03 · November 2026 slot</p>
+  <h1>Finding the cryptography inside an OPC UA deployment</h1>
+  <p class="byline">Friday Ogochukwu Ikwuogu · <span class="mono">ORCID 0009-0009-2222-1318</span> · Published 2026-11-03 · 6 min read</p>
+  <div class="prose"><p>The first issue of this series argued that a pipeline operator's post-quantum work starts with an inventory, and that certificates are the easiest place to begin. OPC UA is where that advice gets tested, because OPC UA is the OT protocol most likely to be doing real public-key cryptography in your environment already.</p>
+<p>Many pipeline control centers use OPC UA between historians, HMIs, analytics platforms, and gateways that front older field protocols. Unlike Modbus or classic DNP3, OPC UA was designed with security built in: every application has its own certificate, every secure channel negotiates keys, and every connection names the cryptographic suite it uses. That makes it unusually inventory-friendly, if you know where to look.</p>
+<h2>How OPC UA uses public-key cryptography</h2>
+<p>An OPC UA client and server set up a <em>secure channel</em> before they exchange data. Three things in that exchange matter for quantum readiness.</p>
+<ol>
+<li><strong>The security policy.</strong> Each endpoint advertises one or more security policies, identified by a URI. The policy fixes the algorithms for the whole channel: how keys are exchanged, how messages are signed, and which symmetric cipher protects the data.</li>
+<li><strong>The security mode.</strong> <code>None</code>, <code>Sign</code>, or <code>SignAndEncrypt</code>. A policy only protects the channel if the mode uses it.</li>
+<li><strong>The application instance certificates.</strong> Each client and server presents an X.509 certificate. The OpenSecureChannel handshake uses the public keys in those certificates to establish the channel's symmetric keys and to authenticate each side.</li>
+</ol>
+<p>The established policies are RSA-based:</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Security policy</th>
+<th>Public-key operations</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Basic128Rsa15</td>
+<td>RSA with PKCS#1 v1.5 padding, SHA-1</td>
+<td>Deprecated</td>
+</tr>
+<tr>
+<td>Basic256</td>
+<td>RSA-OAEP, SHA-1</td>
+<td>Deprecated</td>
+</tr>
+<tr>
+<td>Basic256Sha256</td>
+<td>RSA-OAEP, RSA signatures with SHA-256</td>
+<td>Current, most widely supported</td>
+</tr>
+<tr>
+<td>Aes128_Sha256_RsaOaep</td>
+<td>RSA-OAEP, SHA-256</td>
+<td>Current</td>
+</tr>
+<tr>
+<td>Aes256_Sha256_RsaPss</td>
+<td>RSA-OAEP, RSA-PSS signatures, SHA-256</td>
+<td>Current</td>
+</tr>
+</tbody>
+</table></div>
+<p>OPC UA 1.05 added elliptic-curve policies (ECC_nistP256, ECC_nistP384, and Brainpool curve variants), which give smaller keys and faster handshakes. Support in shipping products is still uneven.</p>
+<p>Every one of these policies relies on RSA or elliptic-curve cryptography for key establishment and authentication. All of it is quantum-vulnerable. OPC UA has no standardized post-quantum security policy yet, so the practical goal today is not to migrate OPC UA. It is to know exactly where each policy is in use, so that you can move quickly when one exists and remove the deprecated ones now.</p>
+<h2>Four places to look</h2>
+<h3>1. Endpoint configuration</h3>
+<p>Every OPC UA server publishes its endpoints, and each endpoint pairs a security mode with a security policy. Any OPC UA client that can browse endpoints will list them without opening a session. Record, for each server:</p>
+<ul>
+<li>every endpoint URL;</li>
+<li>the security modes offered, flagging any <code>None</code> endpoint on a production server;</li>
+<li>the security policies offered, flagging Basic128Rsa15 and Basic256;</li>
+<li>whether the server accepts anonymous users.</li>
+</ul>
+<p>The server offering a strong policy is not the same as clients using it. A server that also offers <code>None</code> or a deprecated policy is only as strong as the weakest client that connects.</p>
+<h3>2. Certificate stores and trust lists</h3>
+<p>Most OPC UA stacks keep their certificates in a folder-based PKI store with a standard layout: the application's own certificate and private key, a <em>trusted</em> folder, an <em>issuers</em> folder, and a <em>rejected</em> folder. Exact paths differ by vendor, but the folder names are recognizable.</p>
+<p>Copy the certificate files (never the private keys) from each store and run them through the inventory tool from issue 01, <code>cert_inventory.py</code>. The <code>rejected</code> folder deserves a separate look. It records clients that tried to connect and were refused, which is often the fastest way to find OPC UA clients nobody documented.</p>
+<p>Look for these in particular:</p>
+<ul>
+<li><strong>Long validity.</strong> Many products generate a self-signed application certificate at install time with a validity of ten years or more. Those certificates are the long-lived trust anchors that issue 01 put at the top of the list.</li>
+<li><strong>Self-signed certificates trusted individually.</strong> Each one is a separate trust decision that must be revisited when algorithms change. A Global Discovery Server (GDS) or an internal CA that issues OPC UA certificates turns hundreds of individual decisions into one.</li>
+<li><strong>SHA-1 signatures and 1024-bit RSA keys.</strong> These are already weak classically and are an easy first fix.</li>
+</ul>
+<h3>3. The traffic itself</h3>
+<p>OPC UA has a property that helps an inventory: the start of every secure channel is readable even when the channel is encrypted. The OpenSecureChannel request carries the security policy URI and the sender's certificate in its asymmetric security header, before any symmetric encryption begins.</p>
+<p>So a passive capture of control-center traffic, taken from a SPAN port or tap under your normal change control, shows which policy each client and server actually negotiated and which certificate each one presented. Wireshark's OPC UA dissector decodes these headers. This gives you what configuration files cannot: the policies really in use, not just the ones on offer.</p>
+<p>Channels are long-lived, and a capture only sees channels that open or renew during the capture window. Run the capture long enough to cover channel renewals, which are set by each application's token lifetime.</p>
+<h3>4. The software stack</h3>
+<p>Each OPC UA product embeds a protocol stack and a cryptographic library, often an OpenSSL build, the .NET cryptography APIs, or mbedTLS on embedded devices. Post-quantum support for OPC UA will arrive through those libraries first. Ask each vendor which stack and which cryptographic library their product uses, and which version. That answer tells you more about the product's upgrade path than any roadmap slide.</p>
+<h2>What to record</h2>
+<p>Add these fields to the inventory from issue 01, one row per OPC UA application:</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application URI and role (server, client, or both)</td>
+<td>Identifies the application independently of host name</td>
+</tr>
+<tr>
+<td>Endpoints, with security modes and policies offered</td>
+<td>What the application allows</td>
+</tr>
+<tr>
+<td>Policy observed in traffic</td>
+<td>What it actually uses</td>
+</tr>
+<tr>
+<td>Certificate key type, size, signature algorithm, expiry</td>
+<td>From <code>cert_inventory.py</code></td>
+</tr>
+<tr>
+<td>Certificate issuer: self-signed, GDS, or internal CA</td>
+<td>Determines how certificates get replaced</td>
+</tr>
+<tr>
+<td>Stack and cryptographic library, with versions</td>
+<td>Determines how algorithms get replaced</td>
+</tr>
+<tr>
+<td>Can the policy be changed by configuration?</td>
+<td>Separates a settings change from a firmware or product change</td>
+</tr>
+</tbody>
+</table></div>
+<h2>What to do now</h2>
+<ol>
+<li><strong>Remove deprecated policies.</strong> Basic128Rsa15 and Basic256 use SHA-1 and should not appear on any production endpoint.</li>
+<li><strong>Close <code>None</code> endpoints</strong> on production servers, or document exactly why each one remains.</li>
+<li><strong>Standardize on one current policy</strong> across the control center where products allow it. Fewer policies in use means fewer places to change later.</li>
+<li><strong>Move certificate issuance to a GDS or an internal CA</strong>, so that a future algorithm change is a re-issuance rather than hundreds of manual trust decisions.</li>
+<li><strong>Shorten the longest-lived application certificates</strong> when you next touch each system.</li>
+<li><strong>Ask every OPC UA vendor in writing</strong> which stack and cryptographic library they ship, whether they support the OPC UA 1.05 ECC policies, and what their plan is for post-quantum security policies.</li>
+</ol>
+<p>None of this waits for a post-quantum OPC UA standard. The work that makes a future migration fast is the same work that makes the current deployment cleaner: fewer policies, fewer exceptions, and a certificate authority instead of a collection of self-signed trust decisions.</p>
+<hr />
+<p><em>Views are my own and do not represent any employer or client. This post uses only public sources and contains no non-public operator information.</em></p>
+<p><strong>Sources</strong></p>
+<ul>
+<li>OPC Foundation, <em>OPC 10000-2: OPC Unified Architecture Part 2, Security Model</em>, and <em>OPC 10000-7: Part 7, Profiles</em> (security policy definitions), version 1.05.</li>
+<li>PHP-OPCUA documentation, <a target="_blank" rel="noopener" href="https://www.php-opcua.com/documentation/opcua-cli/v4.4.x/connecting/security-policies">Security policies</a> (policy list and deprecation status).</li>
+<li>The White House, <a target="_blank" rel="noopener" href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/">Securing the Nation Against Advanced Cryptographic Attacks (EO 14412)</a>, June 22, 2026.</li>
+<li>Ikwuogu, F. O., "What EO 14412 means for a pipeline operator's certificate inventory," <em>Quantum-Safe Pipeline Notes</em>, issue 01, 2026. <a target="_blank" rel="noopener" href="https://doi.org/10.5281/zenodo.23130001">https://doi.org/10.5281/zenodo.23130001</a></li>
+</ul></div>
+  
+  <p class="license">Text licensed <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite as: Friday Ogochukwu Ikwuogu, “Finding the cryptography inside an OPC UA deployment,” Quantum-Safe Pipeline Notes, issue 3.</p>
 </article>
 </div>
 <script>

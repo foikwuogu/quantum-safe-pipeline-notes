@@ -1,12 +1,5 @@
 [
   {
-    "file": "2026-11-opc-ua-cryptography.md",
-    "issue": 3,
-    "series_slot": "November 2026",
-    "title": "Finding the cryptography inside an OPC UA deployment",
-    "release_date": "2026-11-03"
-  },
-  {
     "file": "2026-12-far-pqc-rule-ot-vendors.md",
     "issue": 4,
     "series_slot": "December 2026",
