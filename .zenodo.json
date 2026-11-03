@@ -1,0 +1,63 @@
+{
+  "upload_type": "publication",
+  "publication_type": "technicalnote",
+  "title": "Finding the cryptography inside an OPC UA deployment",
+  "creators": [
+    {
+      "name": "Ikwuogu, Friday Ogochukwu",
+      "affiliation": "Independent Researcher, Odessa, Texas, USA",
+      "orcid": "0009-0009-2222-1318"
+    }
+  ],
+  "description": "<p>OPC UA is the OT protocol most likely to be doing real public-key cryptography in a pipeline control center, and every security policy it currently defines relies on quantum-vulnerable RSA or elliptic-curve cryptography. No post-quantum OPC UA security policy exists yet, so the practical goal is to know exactly where each policy is in use.</p><p>This note explains how OPC UA secure channels use public-key cryptography and shows four places to find it: endpoint configuration, certificate stores and trust lists, the OpenSecureChannel handshake (whose security policy and certificate are readable even on encrypted channels), and the embedded cryptographic library. It defines inventory fields for OPC UA applications and lists six actions, including removing deprecated SHA-1 policies, closing None endpoints, and moving certificate issuance to a Global Discovery Server or internal CA.</p><p>Issue 03 (November 2026 slot) of Quantum-Safe Pipeline Notes, a monthly technical blog on post-quantum cryptography and OT security for U.S. pipelines. Uses public sources only; views are the author's own and do not represent any employer or client.</p>",
+  "publication_date": "2026-11-03",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "keywords": [
+    "post-quantum cryptography",
+    "OPC UA",
+    "operational technology",
+    "SCADA",
+    "pipeline security",
+    "certificate inventory",
+    "security policy",
+    "X.509",
+    "PKI",
+    "critical infrastructure"
+  ],
+  "version": "issue-03",
+  "language": "eng",
+  "related_identifiers": [
+    {
+      "identifier": "https://foikwuogu.github.io/quantum-safe-pipeline-notes/#issue-3",
+      "relation": "isIdenticalTo",
+      "resource_type": "publication-technicalnote",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://foikwuogu.github.io/quantum-safe-pipeline-notes/",
+      "relation": "isPartOf",
+      "resource_type": "other",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/tools/cert_inventory.py",
+      "relation": "isSupplementedBy",
+      "resource_type": "software",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.5281/zenodo.23130292",
+      "relation": "continues",
+      "resource_type": "publication-technicalnote",
+      "scheme": "doi"
+    }
+  ],
+  "references": [
+    "OPC Foundation, OPC 10000-2: OPC Unified Architecture Part 2, Security Model, and OPC 10000-7: Part 7, Profiles (security policy definitions), version 1.05.",
+    "PHP-OPCUA documentation, Security policies. https://www.php-opcua.com/documentation/opcua-cli/v4.4.x/connecting/security-policies (policy list and deprecation status).",
+    "The White House, Securing the Nation Against Advanced Cryptographic Attacks (EO 14412). https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/, June 22, 2026.",
+    "Ikwuogu, F. O., \"What EO 14412 means for a pipeline operator's certificate inventory,\" Quantum-Safe Pipeline Notes, issue 01, 2026. https://doi.org/10.5281/zenodo.23130001"
+  ],
+  "notes": "Issue 03 of Quantum-Safe Pipeline Notes. Text licensed CC BY 4.0. (c) 2026 Friday Ogochukwu Ikwuogu."
+}
