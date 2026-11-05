@@ -7,7 +7,7 @@ Quantum-Safe Pipeline Notes: one issue per month on post-quantum cryptography an
 **Series slot:** November 2026  
 **Published:** 2026-11-03  
 **Read it:** https://foikwuogu.github.io/quantum-safe-pipeline-notes/#issue-3  
-**Archived:** Zenodo DOI pending (added automatically once minted)  
+**Archived:** https://doi.org/10.5281/zenodo.23915804  
 **PDF:** [`pdf/2026-11-opc-ua-cryptography.pdf`](https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/pdf/2026-11-opc-ua-cryptography.pdf)  
 **Source:** [`posts/2026-11-opc-ua-cryptography.md`](https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/posts/2026-11-opc-ua-cryptography.md)
 
@@ -17,7 +17,7 @@ This note explains how OPC UA secure channels use public-key cryptography and sh
 
 **Companion code:** [`tools/cert_inventory.py`](https://github.com/foikwuogu/quantum-safe-pipeline-notes/blob/main/tools/cert_inventory.py)
 
-**Cite as:** Friday Ogochukwu Ikwuogu, "Finding the cryptography inside an OPC UA deployment," Quantum-Safe Pipeline Notes, issue 3, 2026.
+**Cite as:** Friday Ogochukwu Ikwuogu, "Finding the cryptography inside an OPC UA deployment," Quantum-Safe Pipeline Notes, issue 3, 2026. https://doi.org/10.5281/zenodo.23915804
 
 License: text CC BY 4.0; code MIT.
 

@@ -6,6 +6,7 @@ published: "2026-11-03"
 author: Friday Ogochukwu Ikwuogu
 license: CC BY 4.0
 status: published
+doi: "10.5281/zenodo.23915804"
 summary: |
   OPC UA is the OT protocol most likely to be doing real public-key cryptography in a pipeline control center, and every security policy it currently defines relies on quantum-vulnerable RSA or elliptic-curve cryptography. No post-quantum OPC UA security policy exists yet, so the practical goal is to know exactly where each policy is in use.
 
