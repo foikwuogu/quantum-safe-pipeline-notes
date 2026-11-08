@@ -26,5 +26,68 @@
     "series_slot": "March 2027",
     "title": "What a cryptographic bill of materials should tell a pipeline operator",
     "release_date": "2027-03-03"
+  },
+  {
+    "file": "2027-04-crypto-agility-long-lived-equipment.md",
+    "issue": 8,
+    "series_slot": "April 2027",
+    "title": "Crypto-agility for equipment that lasts twenty years",
+    "release_date": "2027-04-03"
+  },
+  {
+    "file": "2027-05-post-quantum-vpn-remote-access.md",
+    "issue": 9,
+    "series_slot": "May 2027",
+    "title": "Post-quantum VPNs for pipeline remote access",
+    "release_date": "2027-05-03"
+  },
+  {
+    "file": "2027-06-migration-plan-working-backward.md",
+    "issue": 10,
+    "series_slot": "June 2027",
+    "title": "Working backward from 2030: a post-quantum migration plan for a pipeline operator",
+    "release_date": "2027-06-03"
+  },
+  {
+    "file": "2027-07-crypto-in-asset-inventory.md",
+    "issue": 11,
+    "series_slot": "July 2027",
+    "title": "Folding cryptography into the asset inventory behind your TSA implementation plan",
+    "release_date": "2027-07-03"
+  },
+  {
+    "file": "2027-08-post-quantum-ssh-engineering-access.md",
+    "issue": 12,
+    "series_slot": "August 2027",
+    "title": "Post-quantum SSH for engineering workstations and jump hosts",
+    "release_date": "2027-08-03"
+  },
+  {
+    "file": "2027-09-ot-lab-bench-pqc-testing.md",
+    "issue": 13,
+    "series_slot": "September 2027",
+    "title": "Building a safe OT lab bench for post-quantum testing",
+    "release_date": "2027-09-03"
+  },
+  {
+    "file": "2027-10-automating-ot-certificate-renewal.md",
+    "issue": 14,
+    "series_slot": "October 2027",
+    "title": "Automating certificate renewal in OT before the algorithm change",
+    "release_date": "2027-10-03"
+  },
+  {
+    "file": "2027-11-iec-62351-dnp3-post-quantum.md",
+    "issue": 15,
+    "series_slot": "November 2027",
+    "title": "What a post-quantum update to IEC 62351 and DNP3 security would need",
+    "release_date": "2027-11-03"
+  },
+  {
+    "file": "2027-12-2028-post-quantum-checklist.md",
+    "issue": 16,
+    "series_slot": "December 2027",
+    "title": "A 2028 post-quantum checklist for pipeline OT teams",
+    "release_date": "2027-12-03"
   }
 ]
